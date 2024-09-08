@@ -1,0 +1,576 @@
+========================UTILIDADES========================
+#procurar aquivos pela data de ultima modificação
+find /home/paulo/Backup -ctime -7 -name backup_home\*tgz
+
+#exbir o tamanho do arquivo em bytes
+stat --printf=%s nome_do_arquivo.txt
+
+# & executa o processo em background
+
+./script.sh &
+
+# mostar só a parte final de um caminho
+
+basename /home/paulo !!! resulta em paulo
+basename ./script.sh !!! resulta em script.sh
+
+# permite cortar exatamente os caracteres que deseja de cada linha
+cat log.txt | awk '{ print substr( $0, length($0)-3, length($0)-1 ) }'
+
+# permite exibir apenas uma linha do arquivo no terminal
+head -4 log.txt | tail +4
+
+
+===================6-10.Principais comandos do Linux=====================================
+
+#ordenar
+  sort -k2 alunos2.txt
+  
+  em que k é o campo
+
+#unico 
+  uniq
+  
+#dormir
+  sleep 10
+
+#trasnforma o conteudo, mudando e traduzindo caracteres
+  tr
+  
+#cortar a saida
+  cut -c1-5 -f1 -d" "
+  em que C é o caractere, F é o campo e D é o delimitador
+  !!! usando TAB como delimitador: cut -d$'\t'
+  !!! usando ESPACO como delimitador: cut -d$' '
+
+#Matemática
+  expr
+
+
+===================11.Execução Sequencial de Comandos no Shell===========================
+
+O ";" permite a execução de multiplos comandos de forma simples como:
+
+ls ; echo linux; pwd
+
+O "&&" permite executar multiplos comandos mas somente se o anterior tiver sucesso:
+
+ls alundks.txt && ls && pwd
+
+O "||" executa o segundo comando somente se o primeiro der erro:
+
+ls kdk.txt || ls
+
+Colocar o comando entre "(" ")" permite executar os comando sem que saia do diretorio atual:
+( cd .. ; ls -l )
+
+Para colocar multiplos comandos quando usamos || && ou ; temos que usar {}:
+ls /home/paulo || {echo "algo" ; exit 1; }
+
+
+====================12.Redirecionamento de entrada e saida=======================
+
+STDIN(0) ---> PROGRAM ---> STDOUT(1)
+		|
+		|--------> STDERR(2)
+
+#Redirecionando a saída STOUT(1):
+
+">" vai redirecionar criando um novo arquivo
+">>" vai redirecionar fazendo um apendicie no final do arquivo já existente
+
+ls aluno.txt > saida.txt
+date >> saida.txt
+
+#Redirecionando a saída STDERR(2):
+
+"2>" vai redirecionar o erro para o aquivo
+"2>>" vai redirecionar o erro para um aquivo já existente
+
+#Redirecionando para casos de sucesso ou erro:
+
+ls -l alunos.txt3 > log.out 2> log-erro.out
+		   sucesso	erro
+
+ls -l alunos.txt3 > log.out 2>&1
+			faz com que o redirecionamento da saida padrão e de erro sejam as mesmas
+
+#Redirecionando a saída para lugar nenhum:
+
+ls -l alunos.txtdd 2> /dev/null
+
+#Redirecionamento de Entrada:
+ "|" pipe
+ "tr"
+
+cat alunos.txt | tr a Z
+tr 'a' 'Z' < alunos.txt
+
+
+======================13.Variáveis no Shell=============================
+
+#Verificando as variáveis do sistema:
+env !!! vê somente as variáveis locais
+set !!! vê as variaveis local e exportadas
+
+#Referenciamos a variável usando "$"
+
+#Declarando varíavel:
+VARIAVEL1=Valor !!! o = tem que ser junto
+echo $VARIAVEL1
+
+VARIAVEL2="Curso de Shell Script"
+echo $VARIAVEL2
+
+#Exportar a variável torna-a visivel para os filhos do processo de onde ela foi criada
+TESTE=ddss
+export TESTE
+
+#Atribuindo a variável o valor da saida de um comando
+usamos a crase "`"
+
+HORA=`date +%H`
+MINUTO=$(date +%M)
+echo $HORA:$MINUTO
+
+
+==================14.O uso das aspas no Shell=========================
+
+#Usado para que o Shell ignore e o não interprete
+A aspa " e apostofro ' protegem tudo que estiver dentro a \ proteje somente o caracter seguinte
+as aspas " protegem quase todos os caracteres exeto o $ ` / 
+o apostrofo ' protegem tudo
+
+
+=================15.Vi==============================================
+
+"$" vai para ultima linha do arquivo
+"!" premite executar um comando no bash sem sair do arquivo
+"/" procura de cima pra baixo
+"?" procura de baixo pra cima
+"d3d" recorta 3 linhas
+"y3y" copia 3 linhas
+
+
+================16.File Globbing==================================
+
+File Globbing usado pelo Shell para selecionar os aquivos de diretorio
+O REGEX vai selecionar um padrão de texto
+
+"[1-5][A-Z]" lista de caracteres possiveis
+"{Aula,AULA}" procura por Aula e por AULA
+"*" para qualquer coisa
+"?" exige que tenha um caracter
+ Aula?
+
+
+================17.REGEX===========================================
+
+"^" tudo que esteja no inicio de uma linha
+"$" tudo que esteja no final da linha
+	"^Linux" ou "Linux$"
+
+"*" indica que o caracter anterior a ele pode aparecer nenhuma ou pode aparecer várias vezes
+  g*
+
+"+" indica que o caracter anterior deve aparecer uma ou mais vezes
+  g+
+
+"?" indica que o caracter anterior pode aparecer nenhuma ou apenas uma vez
+  g?
+
+"." um unico caracter qualquer
+ O.Linux
+
+".*" exige que o caracter anterior exista
+  O.*Linux !!! entre o O e Linux pode existir qualquer coisa
+
+Quando queremos o caracter "." usamos o \.
+
+
+=============================18.Primeiro Script====================
+
+#A primeira linha deve indicar qual será o interpretador como:
+  #!/bin/bash
+
+#Em seguinda podemos utilizar os comandos:
+
+#Alteramos a permissão do arquivo, premitindo a execuçã
+
+#Para executar fazemos:
+./nome_do_script
+  em que ./ é o diretorio local e será aberto um novo bash e nesse novo bash será executado
+  o script e o resultado retorna para o bash pai
+
+source nome_do_script ou . nome_do_script
+  source ou "." fará que o script será executado no bash atual
+
+
+============================19.Definição do PATH====================
+
+#Para adicionar um novo caminho ao PATH
+
+  PATH="$PATH:/home/mostarda/ShellScript"
+
+#Para mater permanentemente colocamos no "/home/.profile" colocando:
+  PATH="$PATH:~mostarda/ShellScript"
+
+
+===========================20.Comentários===========================
+
+#Cabeçalho
+#######################################
+#
+# primeiro_script - script para treino
+# 
+# Autor:
+# Data da criação:
+#
+# Descrição:
+#
+# Exemplos de uso:
+#
+# Alterações;
+#   Dia x: inclusão de tal coisa
+#   Dia y: correção de tal coisa
+#
+########################################
+
+#E o comentário normal
+
+
+========================21.Uso de variáveis nos scripts=============
+
+DATAHORA=$(date +%H:%M)
+
+#Declaradas geralmente no inicio do código
+
+
+========================22.Exit codes===============================
+
+#É um codigo que informa se foi executado com sucesso, indo de 0 a 255
+# 0 indica sucesso, os demais são algum tipo de erro.
+
+# "$?" retorna o codigo de erro do comando anterior usando "echo $?"
+
+# Podemos ver os diferentes tipo de codigo de retorno olhando o "man"
+# Alteramos o exit code do nosso script usando o comando "exit N°"
+# Podemos colocar o codigo de retorn dentro de uma variável de reterno
+    RETURN_CODE=$?
+    echo "O codigo de retorno foi $RETURN_CODE"
+
+
+=======================23.Recebendo a entrada do usuário============
+
+# Utilizamos o "read"
+  read NOME 
+
+# Colocamos -p para aparecer algo no prompt
+  read -p "Informe o seu curso: " CURSO
+
+# -s torna o valor digitado invisivel no prompt
+
+# -n1 captura apenas uma tecla digitada
+
+
+======================24.Recebendo entradas do usuário atraves de parâmetros=============
+
+# $0 - Nome do programa/script
+# $# - Quantidade de parâmetros
+# $* - Todos os parâmetros inseridos
+# $1-9 - Cada um dos parâmetros
+
+
+=====================28.Uso da instrução IF=============================================
+
+if <comando-condicao>
+then
+  comando 1
+elif <comando-condicao>
+then
+  comando 2
+else
+  comando 3
+fi
+
+#O if verifica o codigo de retorno no comando, se 0 ele considera como verdadeiro
+
+#O comando test é usado para criar uma condição, com as opções para testar valores numericos:
+  -eq   igual(equal)
+  -ne   diferente(not equal)
+  -gt   maior que(greater than)
+  -ge   maior ou igual que(greater equal)
+  -lt   menor que(lower than)
+  -le   menor ou igual que(lower equal)
+
+#testado strings:
+  = uma string igual a outra
+  != uma string diferente da outra
+  -n string não nula
+  -z string nula
+
+#testando arquivos:
+  -f é um arquivo
+  -d é um diretorio
+  -r tem permissao de leitura
+  -w tem permissao de escrita
+  -x tem permissao de execucao
+  -s possui tamanho maior que zero
+
+#logica
+  ! "!" inverte, um NOT
+  -a AND
+  -o OR
+  
+  !!!! o AND tem preferencia sobre o OR !!!!
+
+#exemplo:
+  test -f /tmp/test
+  [ 50 -gt 100 ] 
+  [ -f /tmp/test ]
+  [ "$VAR1" -gt 10 ]
+  [ "$VAR7" ] Testa se a variável é nula
+
+
+==========================30.Uso da instrução Case=================
+
+case $var in
+  padrao1) 
+    comandos
+    ;;
+  padrao2)
+    comandos
+    ;;
+  *)
+    comandos
+    ;;
+esac
+
+
+========================35.Uso da instrução For========================
+
+for $VAR1 in $(seq 1 10) !!!! {1 10} !!!! {1..50..5} !!!! $(seq 1 5 50)
+do
+  comando1
+  comando2
+  ...
+done
+
+for arquivo in alunos*
+do
+  echo "O aquivo atual é $arquivo"
+done
+
+for ((i=5; i<=20; i++))
+do
+  echo "O número é $i"
+done
+
+
+=========================36.For + IFS===================
+
+for i in $(cat arquivo.txt) !!!! considera cada campo separado por ' \t\n'
+do                          !!!! chamado de IFS (inter fild separator)
+  echo "O valor atual é $i
+done
+
+# Podemos alterar o separador de campos fazendo:
+
+OLDIFS=$IFS
+
+IFS=:
+
+!!! depois voltamos com o seu valor anterior !!!!
+
+IFS=$OLSIFS
+
+
+===========================38.Uso da instrução While==================
+
+# Executa enquanto algo for veradeiro
+
+while <comando-condição>
+do
+  comando1
+  comando2
+  ...
+done
+
+while [ $(ps axu | wc -l) -lt 300 ]
+do
+  echo "Tudo Ok"
+  sleep 30
+done
+
+
+===========================39.Uso da instrução Until====================
+
+# Executa até que alguma coisa seja verdadeira
+
+until <comando-condição.
+do
+  comando1
+  comando2
+  ...
+done
+
+until ls /var/lock/processo.lock > /dev/null
+do
+  echo "Aguardado Processo..."
+  sleep 30
+done
+
+
+==========================40.Uso dos comandos Continue e Break==========
+
+# break !!!! força o loop ser interropido, indo para o ponto do DONE
+# continue !!!! faz o o loop voltar do inicio
+
+
+==========================46.Uso de funções no Shell Script=============
+
+# Definindo a função:
+
+function nome-funcao () {
+  comandos
+}
+
+nome-funcao (){
+  comandos
+}
+
+# Chamando a função:
+
+nome-funcao par1 par2
+
+VAR1=$(nome-funcao)
+
+# Definição das variáveis
+
+local VAR1="VAAAR"
+
+# Return Code
+
+return 10
+
+
+=======================50.Criando Logs - Modo 1 - Redirecionamento=======================
+
+# Usamos o ">>" para jogar a saida para um arquivo
+./Script.sh >> log.out
+
+# Usamos o ">>" junto com 2>&1 para caso ocorra erros jogue no mesmo arquivo
+./Script.sh >> log.out 2>&1
+
+# Usamos o "2>>" para jogar em um aquivo diferente
+./Script.sh >> log.out 2>> log_erro.out
+
+# Jogando a saida na tela e no arquivo
+./Script.sh | tee -a log.out   !!!! "-a" para append
+
+# Usando o redirecionamento dentro do script
+Criamos uma variavel para conter o nome do log
+LOG="$HOME/Log/loggg.txt"
+
+Colocamos algum conteúdo no inicio o no final do log:
+echo "Incio do log" >> $LOG
+echo "Fim do log" >> $LOG
+
+
+========================51.Criando Logs - Modo 2 - Uso do Exec=================
+
+# Outra maneira para fazer que tudo seja jogado no log
+exec 1>> $LOG
+exec 2>&1
+
+O comando exec atribui isso na execução do script não sendo necessário usar:
+./Script >> log.out 2>&1
+
+# Usando process substitution
+exec 1>> >(tee -a "$LOG")
+
+
+========================52.Criando Logs - Modo 3 - Uso do Logger e Rsyslog=====
+
+# O Rsyslog tem o /etc/rsyslog.conf/ e /etc/rsylog.d/
+
+# As configurações dos logs ficam em /etc/rsyslog.d/
+  A configuração dos principais logs estão no arquivo 50-default.conf
+  O Rsyslog lê todos os arquvos que estão nesse diretório
+
+# Facility = O criador da mensagem
+Os Facility de 'local0' a 'local7' são disponibilizados para o nosso uso
+
+# Priority = Urgência/Importancia da mensagem
+
+# O nome antes do '.' indica o Facility e depois do '.' indica a Priority
+ e o caminho depois é a localização do arquivo de log
+
+# Criamos um novo arquivo em /etc/rsyslog.d/ com a cofiguração:
+local0.*    /var/log/scripts.log
+
+# Para pegar as novas configurações temos que reiniciar o rsyslog
+systemctl restart rsyslog
+
+# Para jogor o conteudo para o log mandamos uma mensagem para o logger 
+e ele jogará para o aquivo de log configurado:
+podemos atribuir uma Tag de identificação
+
+logger -p local0.err -t [Script1] "Teste de mensagem de erro"
+
+# Inserindo no script para mandar para o log
+echo "Inciando o Script"  | logger -p local0.warn -t [$0]
+
+# Usando o tee junto com o logger
+echo "Algo" | tee -a >(logger -p local0.warn -t [$0]
+nesta forma o tee joga o fluxo no logger a medida que ele gera a saida dele
+usando o pipe ele joga somente depois de gerar toda a saída
+
+
+=========================53.Enviando E-mails - Comando Email=============
+
+# Usando o comando mail
+apt-get instal bsd-mailx
+necessário ter um postfix ou outro servidor de email instalado na máquina
+
+# Para enviar um e-mail
+mail -s "Assunto" paulofff22@hotmail.com
+
+# Colocando o contudo no e-mail
+mail -s "Assunto" paulofff22@hotmail.com  < log.out
+
+# Usando o mail no script
+criamos uma váriavel do endereço de email do destinatário
+DESTINO=paulofff22@hotmail.com
+colocamos a mensagem dentro de um aquivo temporário localizado no /tmp/
+echo "ALGOO" >> /tmp/msg_tmp
+mail -s "Relatorio de execução do $0" $DESTINO < /tmp/msg_temp
+rm -f /tmp/msg_temp
+
+ou
+
+DESTINO=paulofff22@hotmail.com
+CONTEUDO="$(date): Iniciando o Script\n"
+CONTEUDO="$CONTEUDO$(date): Fim do Script\n"
+echo -e  $CONTEUDO | mail -s "Relatorio de execução do $0" $DESTINO
+
+# Podemos usar o 'mutt' ou o 'sendmail' ou ('sendemail') que permite usar servidores de e-mail externos
+apt-get install mutt
+
+
+=====================58.Tecnicas de debug=========================
+
+# Fazer um parser, testar o script sem executa-lo:
+bash -n Script.sh
+
+# Exibe com + na frente de todo os comandos executados junto com o conteudo do script
+bash -xv Script.sh
+
+# Podemos inserir o bash -xv dentro do proprio script acionando o modo debug
+
+set -x !!! incia o debug
+set +x !!! termina do debug
+
+# Execução linha a linha, adicionamos no script
+trap read DEBUG  #Começando a execução passo a passo
+trap "" DEBUG #Finalizando a execução passo a passo
